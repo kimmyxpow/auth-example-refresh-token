@@ -1,16 +1,24 @@
 import { logoutApi } from "@/lib/api";
-import { Link, Outlet, useLoaderData, useNavigate } from "react-router";
+import {
+    Link,
+    Outlet,
+    useLoaderData,
+    useNavigate,
+    useRevalidator,
+} from "react-router";
 import { toast, Toaster } from "sonner";
 
 const RootLayout = () => {
     const { session } = useLoaderData();
     const navigate = useNavigate();
+    const revalidator = useRevalidator();
 
     const handleLogout = async () => {
         const response = await logoutApi();
 
         if (!response.success) return toast.error(response.message);
 
+        revalidator.revalidate();
         navigate("/login");
     };
 
@@ -19,7 +27,7 @@ const RootLayout = () => {
             <h1 className="text-4xl">
                 Basic Example Refresh Token + Auth Token
             </h1>
-            <nav className="flex gap-4">
+            <nav className="flex gap-4 items-center">
                 <Link className="hover:underline" to="/">
                     Home
                 </Link>
@@ -34,6 +42,9 @@ const RootLayout = () => {
                         >
                             Logout
                         </button>
+                        <span className="text-sm h-8 px-4 flex items-center bg-zinc-800 text-white">
+                            Logged in as {session.data.username}
+                        </span>
                     </>
                 ) : (
                     <Link className="hover:underline" to="/login">

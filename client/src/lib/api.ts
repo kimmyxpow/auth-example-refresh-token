@@ -20,7 +20,9 @@ const { onAuthRequired, onResponseRefreshToken } =
             handler: async () => {
                 const response = await refreshTokenApi();
 
-                setAccessToken(response.data.accessToken || "");
+                if (!response.success) location.href = "/login";
+
+                setAccessToken(response.data.accessToken);
             },
         },
         async login(response) {

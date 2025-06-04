@@ -52,8 +52,6 @@ app.post("/login", async (c) => {
         maxAge: 7 * 24 * 60 * 60,
     });
 
-    console.log("login", refreshToken, accessToken);
-
     return c.json({
         message: "Successfully login",
         success: true,
@@ -114,8 +112,6 @@ app.post("/refresh-token", async (c) => {
             maxAge: 7 * 24 * 60 * 60,
         });
 
-        console.log("refreshToken", newRefreshToken, accessToken);
-
         return c.json({
             message: "Successfully receive access token",
             success: true,
@@ -138,14 +134,11 @@ const verifyToken = createMiddleware<{
     const authHeader = c.req.header("Authorization");
     const token = authHeader && authHeader.split(" ")[1];
 
-    console.log("verifyToken", token);
-
     if (!token)
         return c.json({ message: "Need access token", success: false }, 401);
 
     try {
         const payload = await verify(token, ACCESS_TOKEN_SECRET);
-        console.log("payload", payload);
         c.set("user", payload);
         await next();
     } catch (error) {

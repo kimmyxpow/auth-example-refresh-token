@@ -1,31 +1,22 @@
 import { protectedApi } from "@/lib/api";
-import { useEffect, useState } from "react";
+import { useWatcher } from "alova/client";
+import { useLocation } from "react-router";
 
 const ProtectedPage = () => {
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
+    const location = useLocation();
 
-    useEffect(() => {
-        const fetchProtectedData = async () => {
-            try {
-                const response = await protectedApi();
-                setMessage(response.message);
-                setError("");
-            } catch (err) {
-                setError(
-                    (err as Error).message || "Failed to access protected route"
-                );
-                setMessage("");
-            }
-        };
-        fetchProtectedData();
-    }, []);
+    const { loading, data } = useWatcher(
+        () => protectedApi(),
+        [location.pathname],
+        { immediate: true }
+    );
+
+    if (loading) return <p>Loading...</p>;
 
     return (
         <div>
             <h1 className="text-2xl mb-4">Protected Page</h1>
-            {message && <p className="text-green-600">{message}</p>}
-            {error && <p className="text-red-600">{error}</p>}
+            <p className="text-emerald-600">{data.message}</p>
         </div>
     );
 };
