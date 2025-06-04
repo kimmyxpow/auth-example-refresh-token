@@ -1,6 +1,5 @@
 import { Hono, type Context, type Next } from "hono";
 import { cors } from "hono/cors";
-import type { ApiResponse } from "shared/dist";
 import { decode, sign, verify } from "hono/jwt";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
@@ -16,7 +15,7 @@ let refreshTokens: { userId: number; token: string }[] = [];
 
 const app = new Hono();
 
-app.use(cors({ origin: ["http://localhost:5174"], credentials: true }));
+app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
 
 app.post("/login", async (c) => {
     const { username, password } = await c.req.json();
